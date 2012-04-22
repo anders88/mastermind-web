@@ -30,12 +30,21 @@
 (defn convert-string-to-color-code [s]
   (map codestr-to-color (map #(str %) s))
   )
+
+(defn guess-as-string [guess]
+  (str (reduce (fn [a b] (str a "+" b)) (:guess guess)) " -> Correct place: " (:place (:feedback guess)) " Correct color: "  (:place (:feedback guess)))
+  )
+  
                 
 (defpage [:get "/findSolution"] {:as parameters} 
   (html
-   [:body (str "You said "
-             (find-solution (convert-string-to-color-code (:fact parameters)) [])
-        )
-    ]
+   [:body
+    [:h1 (str "The code was " (:fact parameters))]
+    [:ul
+     (for [part (find-solution (convert-string-to-color-code (:fact parameters)) [])]
+       [:li (guess-as-string part)]
+       )
+     ]
+   ]
    )
   )
